@@ -1,0 +1,118 @@
+{
+  "workspace": {
+    "name": "社内FAQ",
+    "icon": "BookMarked"
+  },
+  "domains": [
+    { "id": "jinji", "name": "人事労務" },
+    { "id": "it", "name": "IT" },
+    { "id": "ai", "name": "AI" },
+    { "id": "brand", "name": "ブランド" },
+    { "id": "somu", "name": "総務" }
+  ],
+  "entries": [
+    {
+      "id": "faq-1",
+      "primaryDomainId": "jinji",
+      "tags": ["勤怠", "在宅"],
+      "question": "在宅勤務時の勤怠打刻はどうすればよいですか？",
+      "answer": "所定の勤怠システムから、始業・終業・休憩を本人が入力します。出張や客先常駐の日は「勤務場所」欄を忘れずに更新してください。\n\n※ 詳細は就業規則の「在宅勤務」章を参照（仮置きリンクはペイン4）。",
+      "relatedEntryIds": ["faq-2"],
+      "manualLinks": [
+        {
+          "label": "就業規則（イントラ・仮URL）",
+          "href": "https://example.com/rules"
+        }
+      ],
+      "createdAt": "2025-03-01",
+      "updatedAt": "2026-04-10",
+      "updatedBy": "人事チーム",
+      "viewCount": 210,
+      "askedCount": 14
+    },
+    {
+      "id": "faq-2",
+      "primaryDomainId": "jinji",
+      "tags": ["勤怠", "休暇"],
+      "question": "有給休暇の申請期限はありますか？",
+      "answer": "原則として取得希望日の前営業日までに申請してください。急病などやむを得ない場合は事後申請の手順に従ってください。",
+      "relatedEntryIds": ["faq-1"],
+      "manualLinks": [],
+      "createdAt": "2025-02-15",
+      "updatedAt": "2025-12-01",
+      "updatedBy": "人事チーム",
+      "viewCount": 132,
+      "askedCount": 6
+    },
+    {
+      "id": "faq-3",
+      "primaryDomainId": "it",
+      "tags": ["PC", "アカウント"],
+      "question": "新入社員のPC手配とアカウント発行の流れを教えてください",
+      "answer": "人事からの起票を受けて IT が端末を手配し、標準アカウントを発行します。到着予定日の 3 営業日前を目安にセットアップ依頼メールが届きます（運用は仮置き）。",
+      "relatedEntryIds": ["faq-1", "faq-4"],
+      "manualLinks": [
+        {
+          "label": "IT ヘルプデスク（仮）",
+          "href": "https://example.com/it-help"
+        }
+      ],
+      "createdAt": "2025-06-20",
+      "updatedAt": "2026-01-08",
+      "updatedBy": "IT サポート",
+      "viewCount": 98,
+      "askedCount": 9
+    },
+    {
+      "id": "faq-4",
+      "primaryDomainId": "ai",
+      "tags": ["生成AI", "セキュリティ"],
+      "question": "社内で生成AIツールを使うときの注意点は？",
+      "answer": "機密情報・個人情報・未公開の顧客データをプロンプトに含めないでください。許可されたツールの一覧は情報システム部のページを参照し、利用申請が必要なものは事前申請してください（方針は後から差し替え可能な仮文案）。",
+      "relatedEntryIds": ["faq-3"],
+      "manualLinks": [],
+      "createdAt": "2025-09-01",
+      "updatedAt": "2026-05-01",
+      "updatedBy": "情報システム部",
+      "viewCount": 301,
+      "askedCount": 22
+    },
+    {
+      "id": "faq-5",
+      "primaryDomainId": "somu",
+      "tags": ["備品", "オフィス"],
+      "question": "オフィス備品の発注はどこから行いますか？",
+      "answer": "総務ポータルの「備品発注」メニューから申請してください。急ぎの場合は総務窓口までチャットで相談ください（連携先は後決めで仮置き）。",
+      "relatedEntryIds": [],
+      "manualLinks": [
+        {
+          "label": "総務ポータル（仮）",
+          "href": "https://example.com/somu"
+        }
+      ],
+      "createdAt": "2025-11-11",
+      "updatedAt": "2025-11-11",
+      "viewCount": 45,
+      "askedCount": 3
+    },
+    {
+      "id": "faq-6",
+      "primaryDomainId": "brand",
+      "tags": ["ロゴ", "表記"],
+      "question": "外部資料に社名ロゴを載せるときのルールは？",
+      "answer": "ブランドガイドラインに定義された最小余白・配色・禁止例に従ってください。改変や影付けは禁止です。最新のロゴデータはブランドサイトから取得してください。",
+      "relatedEntryIds": [],
+      "manualLinks": [
+        {
+          "label": "ブランドガイドライン（仮）",
+          "href": "https://example.com/brand"
+        }
+      ],
+      "createdAt": "2026-01-20",
+      "updatedAt": "2026-03-02",
+      "updatedBy": "コーポレートデザイン",
+      "viewCount": 67,
+      "askedCount": 2
+    }
+  ]
+}

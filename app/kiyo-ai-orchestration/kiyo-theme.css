@@ -1,0 +1,87 @@
+[data-workspace="kiyo"] {
+  --kiyo-bg-darkest: #12102a;
+  --kiyo-bg-panel: #1a1535;
+  --kiyo-bg-card: #221e42;
+  --kiyo-accent-yellow: #fed100;
+  --kiyo-accent-purple: #392171;
+  --kiyo-text-primary: #e8e4ff;
+  --kiyo-text-secondary: #c8c0f0;
+  --kiyo-text-muted: #7a6faa;
+  --kiyo-text-faint: #5a5390;
+  --kiyo-radius-lg: 8px;
+  --kiyo-radius-sm: 4px;
+  color: var(--kiyo-text-primary);
+  background: var(--kiyo-bg-darkest);
+  min-height: 100vh;
+}
+
+[data-workspace="kiyo"] .kiyo-panel {
+  background: var(--kiyo-bg-panel);
+  border: 0.5px solid var(--kiyo-accent-purple);
+}
+
+[data-workspace="kiyo"] .kiyo-card {
+  background: var(--kiyo-bg-card);
+  border: 0.5px solid var(--kiyo-accent-purple);
+  border-radius: var(--kiyo-radius-lg);
+}
+
+[data-workspace="kiyo"] .kiyo-badge {
+  border-radius: var(--kiyo-radius-sm);
+  border: 0.5px solid var(--kiyo-accent-purple);
+  background: color-mix(in srgb, var(--kiyo-accent-purple) 40%, transparent);
+  color: var(--kiyo-text-secondary);
+}
+
+[data-workspace="kiyo"] .kiyo-user-bubble {
+  background: var(--kiyo-accent-purple);
+  color: var(--kiyo-text-primary);
+  border-radius: var(--kiyo-radius-lg);
+}
+
+[data-workspace="kiyo"] .kiyo-ai-bubble {
+  background: var(--kiyo-bg-card);
+  color: var(--kiyo-text-primary);
+  border: 0.5px solid var(--kiyo-accent-purple);
+  border-radius: var(--kiyo-radius-lg);
+}
+
+[data-workspace="kiyo"] .kiyo-error-bubble {
+  background: color-mix(in srgb, #ef4444 20%, var(--kiyo-bg-card));
+  border: 0.5px solid #ef4444;
+  color: #fecaca;
+  border-radius: var(--kiyo-radius-lg);
+}
+
+[data-workspace="kiyo"] .kiyo-btn-primary {
+  background: var(--kiyo-accent-purple);
+  color: var(--kiyo-text-primary);
+  border-radius: var(--kiyo-radius-sm);
+}
+
+[data-workspace="kiyo"] .kiyo-btn-accent {
+  background: var(--kiyo-accent-yellow);
+  color: #12102a;
+  border-radius: var(--kiyo-radius-sm);
+}
+
+[data-workspace="kiyo"] .kiyo-tab-active {
+  background: var(--kiyo-accent-purple);
+  color: var(--kiyo-text-primary);
+}
+
+[data-workspace="kiyo"] .kiyo-tab {
+  border-radius: var(--kiyo-radius-sm);
+  color: var(--kiyo-text-muted);
+}
+
+[data-workspace="kiyo"] .kiyo-input {
+  background: var(--kiyo-bg-card);
+  border: 0.5px solid var(--kiyo-accent-purple);
+  color: var(--kiyo-text-primary);
+  border-radius: var(--kiyo-radius-lg);
+}
+
+[data-workspace="kiyo"] .kiyo-input::placeholder {
+  color: var(--kiyo-text-faint);
+}

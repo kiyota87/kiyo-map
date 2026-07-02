@@ -68,3 +68,23 @@ export function completedThisMonth(projects: Project[], month: string): number {
 export function ideaProjects(projects: Project[]): Project[] {
   return projects.filter((p) => p.status === "idea");
 }
+
+export function isProjectCompleted(project: Project): boolean {
+  return project.status === "done" || project.progress >= 100;
+}
+
+export function partitionProjectsForList(projects: Project[]): {
+  active: Project[];
+  completed: Project[];
+} {
+  const active: Project[] = [];
+  const completed: Project[] = [];
+  for (const project of projects) {
+    if (isProjectCompleted(project)) {
+      completed.push(project);
+    } else {
+      active.push(project);
+    }
+  }
+  return { active, completed };
+}

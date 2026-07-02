@@ -16,6 +16,9 @@ export const PROJECT_PRIORITY_LABELS: Record<ProjectPriority, string> = {
 
 export const ALL_CATEGORY_ID = "__all__";
 
+/** クイックメモで貯めるアイディア置き場（大分類） */
+export const IDEA_CATEGORY = "アイディア";
+
 export function statusLabel(status: ProjectStatus): string {
   return PROJECT_STATUS_LABELS[status];
 }

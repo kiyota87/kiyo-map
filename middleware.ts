@@ -14,6 +14,7 @@ export const config = {
   matcher: [
     "/kiyo-ai-orchestration/:path*",
     "/api/kiyo/:path*",
+    "/api/kiyo-map/:path*",
     "/kiyo-map/:path*",
   ],
 };

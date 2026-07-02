@@ -15,6 +15,8 @@ import {
   loadKiyoMapData,
   saveKiyoMapData,
 } from "@/lib/kiyo-map/storage";
+import { IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
+import type { ShapeIdeaPick } from "@/lib/kiyo-map/prompts";
 import type {
   InboxItem,
   KiyoMapData,
@@ -27,6 +29,7 @@ type KiyoMapContextValue = {
   data: KiyoMapData;
   hydrated: boolean;
   unresolvedInboxCount: number;
+  addIdeaProject: (text: string) => void;
   addInboxMemo: (text: string) => void;
   resolveInboxItem: (
     inboxId: string,
@@ -37,11 +40,13 @@ type KiyoMapContextValue = {
       priority: ProjectPriority;
     },
   ) => void;
+  applyShapePick: (pick: ShapeIdeaPick) => void;
   updateProject: (
     projectId: string,
     patch: Partial<Project>,
     historyNote?: string,
   ) => void;
+  deleteProject: (projectId: string) => void;
   selectRelatedProject: (projectId: string) => string;
 };
 
@@ -52,14 +57,23 @@ type KiyoMapProviderProps = {
   children: ReactNode;
 };
 
+function ensureIdeaCategory(categories: string[]): string[] {
+  return categories.includes(IDEA_CATEGORY)
+    ? categories
+    : [IDEA_CATEGORY, ...categories];
+}
+
 export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
   const [data, setData] = useState<KiyoMapData>(() => loadKiyoMapData(userEmail));
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    // localStorage からの復元はクライアント初回マウント時のみ
+    const loaded = loadKiyoMapData(userEmail);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate persisted data
-    setData(loadKiyoMapData(userEmail));
+    setData({
+      ...loaded,
+      categories: ensureIdeaCategory(loaded.categories),
+    });
     setHydrated(true);
   }, [userEmail]);
 
@@ -72,6 +86,41 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     () => data.inbox.filter((item) => !item.resolved).length,
     [data.inbox],
   );
+
+  const addIdeaProject = useCallback((text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    const now = new Date().toISOString();
+    const project: Project = {
+      id: crypto.randomUUID(),
+      title: trimmed.slice(0, 48),
+      status: "idea",
+      category: IDEA_CATEGORY,
+      priority: "C",
+      progress: 0,
+      deadline: null,
+      nextAction: "",
+      memo: trimmed,
+      createdAt: now,
+      updatedAt: now,
+      completedAt: null,
+      history: [
+        {
+          date: now,
+          content: "クイックメモからアイディアとして保存",
+        },
+      ],
+      relatedProjectIds: [],
+      relatedNotes: "",
+      relatedAiKnowledge: null,
+    };
+
+    setData((prev) => ({
+      ...prev,
+      projects: [project, ...prev.projects],
+      categories: ensureIdeaCategory(prev.categories),
+    }));
+  }, []);
 
   const addInboxMemo = useCallback((text: string) => {
     const trimmed = text.trim();
@@ -129,9 +178,7 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
         ...prev,
         projects: [project, ...prev.projects],
         inbox: prev.inbox.map((item) =>
-          item.id === inboxId
-            ? { ...item, resolved: true }
-            : item,
+          item.id === inboxId ? { ...item, resolved: true } : item,
         ),
         categories: prev.categories.includes(input.category)
           ? prev.categories
@@ -140,6 +187,34 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     },
     [],
   );
+
+  const applyShapePick = useCallback((pick: ShapeIdeaPick) => {
+    setData((prev) => ({
+      ...prev,
+      projects: prev.projects.map((project) => {
+        if (project.id !== pick.projectId) return project;
+        const now = new Date().toISOString();
+        const planBlock = pick.plan ? `\n\n【進め方】\n${pick.plan}` : "";
+        let next: Project = {
+          ...project,
+          status: "in_progress",
+          category: pick.suggestedCategory,
+          nextAction: pick.nextAction,
+          memo: `${project.memo}${planBlock}`.trim(),
+          progress: project.progress > 0 ? project.progress : 10,
+          updatedAt: now,
+        };
+        next = appendProjectHistory(
+          next,
+          `アイディアをかたちに: ${pick.suggestedCategory}へ / ${pick.nextAction}`,
+        );
+        return next;
+      }),
+      categories: prev.categories.includes(pick.suggestedCategory)
+        ? prev.categories
+        : [...prev.categories, pick.suggestedCategory],
+    }));
+  }, []);
 
   const updateProject = useCallback(
     (projectId: string, patch: Partial<Project>, historyNote?: string) => {
@@ -153,8 +228,13 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
             ...patch,
             updatedAt: now,
           };
-          if (patch.status === "done" && project.status !== "done") {
-            next.completedAt = now;
+          if (
+            (patch.progress !== undefined && patch.progress >= 100) ||
+            patch.status === "done"
+          ) {
+            next.progress = 100;
+            next.status = "done";
+            if (!next.completedAt) next.completedAt = now;
           }
           if (patch.status && patch.status !== "done" && project.status === "done") {
             next.completedAt = null;
@@ -169,6 +249,20 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     [],
   );
 
+  const deleteProject = useCallback((projectId: string) => {
+    setData((prev) => ({
+      ...prev,
+      projects: prev.projects
+        .filter((project) => project.id !== projectId)
+        .map((project) => ({
+          ...project,
+          relatedProjectIds: project.relatedProjectIds.filter(
+            (id) => id !== projectId,
+          ),
+        })),
+    }));
+  }, []);
+
   const selectRelatedProject = useCallback((projectId: string) => projectId, []);
 
   const value = useMemo<KiyoMapContextValue>(
@@ -176,18 +270,24 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
       data,
       hydrated,
       unresolvedInboxCount,
+      addIdeaProject,
       addInboxMemo,
       resolveInboxItem,
+      applyShapePick,
       updateProject,
+      deleteProject,
       selectRelatedProject,
     }),
     [
       data,
       hydrated,
       unresolvedInboxCount,
+      addIdeaProject,
       addInboxMemo,
       resolveInboxItem,
+      applyShapePick,
       updateProject,
+      deleteProject,
       selectRelatedProject,
     ],
   );

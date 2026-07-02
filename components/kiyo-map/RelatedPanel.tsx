@@ -25,7 +25,7 @@ export function RelatedPanel({
 
   if (!project) {
     return (
-      <aside className="flex w-56 shrink-0 flex-col bg-muted/20 lg:w-72">
+      <aside className="flex min-w-0 flex-1 flex-col bg-muted/20">
         <div className="flex h-12 shrink-0 items-center border-b border-border px-3">
           <h3 className="text-sm font-medium">関連情報</h3>
         </div>
@@ -45,7 +45,7 @@ export function RelatedPanel({
   );
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col bg-muted/20 lg:w-72">
+    <aside className="flex min-w-0 flex-1 flex-col bg-muted/20">
       <div className="flex h-12 shrink-0 items-center border-b border-border px-3">
         <h3 className="text-sm font-medium">関連情報</h3>
       </div>

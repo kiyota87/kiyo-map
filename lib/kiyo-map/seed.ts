@@ -10,6 +10,7 @@ export const DEFAULT_KIYO_MAP_DATA: KiyoMapData = {
     icon: "map",
   },
   categories: [
+    "アイディア",
     "HR/労務",
     "AI推進",
     "ブランディング",

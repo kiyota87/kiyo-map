@@ -14,10 +14,7 @@ export function PageTabs() {
   const pathname = usePathname();
 
   return (
-    <nav
-      aria-label="画面切替"
-      className="flex shrink-0 gap-1 border-b border-border bg-background px-3"
-    >
+    <nav aria-label="画面切替" className="flex shrink-0 gap-1">
       {tabs.map((tab) => {
         const active = pathname === tab.href;
         return (
@@ -25,10 +22,10 @@ export function PageTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "border-b-2 px-3 py-2 text-sm transition-colors",
+              "rounded-lg px-3 py-1.5 text-sm transition-colors",
               active
-                ? "border-primary font-medium text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground",
+                ? "bg-secondary font-medium text-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             {tab.label}

@@ -4,96 +4,82 @@ import { Map } from "lucide-react";
 
 import { ALL_CATEGORY_ID } from "@/lib/kiyo-map/labels";
 import { countByCategory } from "@/lib/kiyo-map/computed";
-import { Pane1Toggle } from "@/components/workspace/Pane1Toggle";
 import { Badge } from "@/components/ui/badge";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import type { Project } from "@/lib/kiyo-map/schema";
 
 type CategoryNavProps = {
-  workspaceName: string;
   categories: string[];
   projects: Project[];
   selectedCategoryId: string;
   onSelectCategory: (categoryId: string) => void;
+  className?: string;
 };
 
 export function CategoryNav({
-  workspaceName,
   categories,
   projects,
   selectedCategoryId,
   onSelectCategory,
+  className,
 }: CategoryNavProps) {
   const counts = countByCategory(projects, categories);
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="border-r border-sidebar-border [&_[data-slot=sidebar-container]]:bg-sidebar"
+    <aside
+      className={cn(
+        "flex min-w-0 flex-1 flex-col border-r border-border bg-muted/30",
+        className,
+      )}
     >
-      <SidebarHeader className="border-b border-sidebar-border p-0">
-        <div className="flex h-12 items-center justify-between gap-2 px-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[state=expanded]:px-5">
-          <div className="flex min-w-0 items-center gap-2 group-data-[collapsible=icon]:hidden">
-            <Map className="size-4 shrink-0 text-sidebar-foreground" />
-            <h2 className="truncate text-sm font-semibold text-sidebar-foreground">
-              {workspaceName}
-            </h2>
-          </div>
-          <Pane1Toggle />
-        </div>
-      </SidebarHeader>
-      <SidebarContent className="px-1 py-3 group-data-[collapsible=icon]:hidden">
-        <SidebarGroup className="px-1">
-          <SidebarGroupLabel className="px-2 text-xs font-semibold tracking-wide text-sidebar-foreground/70 uppercase">
-            大分類
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={selectedCategoryId === ALL_CATEGORY_ID}
-                  onClick={() => onSelectCategory(ALL_CATEGORY_ID)}
-                >
-                  <span className="truncate">すべて</span>
-                  <Badge
-                    variant="secondary"
-                    className="ml-auto tabular-nums"
-                  >
-                    {projects.length}
-                  </Badge>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {categories.map((category) => (
-                <SidebarMenuItem key={category}>
-                  <SidebarMenuButton
-                    isActive={selectedCategoryId === category}
-                    onClick={() => onSelectCategory(category)}
-                  >
-                    <span className="truncate">{category}</span>
-                    <Badge
-                      variant="secondary"
-                      className="ml-auto tabular-nums"
-                    >
-                      {counts[category] ?? 0}
-                    </Badge>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+      <div className="flex h-12 shrink-0 items-center border-b border-border px-3">
+        <h3 className="text-sm font-medium">大分類</h3>
+      </div>
+      <ScrollArea className="min-h-0 flex-1">
+        <ul className="flex flex-col gap-0.5 p-2">
+          <li>
+            <Button
+              type="button"
+              variant={selectedCategoryId === ALL_CATEGORY_ID ? "secondary" : "ghost"}
+              size="sm"
+              className="h-auto w-full justify-between px-2 py-2"
+              onClick={() => onSelectCategory(ALL_CATEGORY_ID)}
+            >
+              <span className="truncate">すべて</span>
+              <Badge variant="secondary" className="tabular-nums">
+                {projects.length}
+              </Badge>
+            </Button>
+          </li>
+          {categories.map((category) => (
+            <li key={category}>
+              <Button
+                type="button"
+                variant={selectedCategoryId === category ? "secondary" : "ghost"}
+                size="sm"
+                className="h-auto w-full justify-between px-2 py-2"
+                onClick={() => onSelectCategory(category)}
+              >
+                <span className="truncate">{category}</span>
+                <Badge variant="secondary" className="tabular-nums">
+                  {counts[category] ?? 0}
+                </Badge>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
+    </aside>
+  );
+}
+
+export function KiyoMapTitle({ name }: { name: string }) {
+  return (
+    <div className="flex min-w-0 items-center gap-2">
+      <Map className="size-4 shrink-0 text-muted-foreground" />
+      <h1 className="truncate text-sm font-semibold">{name}</h1>
+    </div>
   );
 }

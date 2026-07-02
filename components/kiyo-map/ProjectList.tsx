@@ -1,16 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  filterProjectsByCategory,
-  partitionProjectsForList,
-  statusDotClass,
-} from "@/lib/kiyo-map/computed";
-import { ALL_CATEGORY_ID, IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
+import { filterProjectsByCategory, statusDotClass } from "@/lib/kiyo-map/computed";
+import { ALL_CATEGORY_ID, IDEA_CATEGORY, projectListTitle } from "@/lib/kiyo-map/labels";
 import type { Project } from "@/lib/kiyo-map/schema";
 import { ShapeIdeasTrigger } from "@/components/kiyo-map/ShapeIdeasDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 
 type ProjectListProps = {
   projects: Project[];
@@ -23,12 +18,10 @@ function ProjectRow({
   project,
   active,
   onSelect,
-  muted = false,
 }: {
   project: Project;
   active: boolean;
   onSelect: () => void;
-  muted?: boolean;
 }) {
   return (
     <li>
@@ -40,7 +33,6 @@ function ProjectRow({
           active
             ? "bg-card text-foreground"
             : "text-foreground hover:bg-card/60",
-          muted && "opacity-70",
         )}
       >
         <span
@@ -50,7 +42,7 @@ function ProjectRow({
           )}
           aria-hidden
         />
-        <span className="truncate">{project.title}</span>
+        <span className="truncate">{projectListTitle(project)}</span>
       </button>
     </li>
   );
@@ -67,7 +59,6 @@ export function ProjectList({
     selectedCategoryId,
     ALL_CATEGORY_ID,
   );
-  const { active, completed } = partitionProjectsForList(filtered);
   const isIdeaCategory = selectedCategoryId === IDEA_CATEGORY;
   const ideaPool = isIdeaCategory
     ? filtered.filter((project) => project.status === "idea")
@@ -85,40 +76,21 @@ export function ProjectList({
       ) : null}
       <ScrollArea className="min-h-0 flex-1">
         <ul className="flex flex-col gap-0.5 p-2">
-          {active.length === 0 && completed.length === 0 ? (
+          {filtered.length === 0 ? (
             <li className="px-2 py-4 text-sm text-muted-foreground">
               {isIdeaCategory
                 ? "アイディアを下の入力欄から追加できます"
                 : "案件がありません"}
             </li>
           ) : (
-            <>
-              {active.map((project) => (
-                <ProjectRow
-                  key={project.id}
-                  project={project}
-                  active={project.id === selectedProjectId}
-                  onSelect={() => onSelectProject(project.id)}
-                />
-              ))}
-              {completed.length > 0 ? (
-                <>
-                  <li className="px-2 pt-3 pb-1">
-                    <Separator />
-                    <p className="pt-2 text-xs text-muted-foreground">完了</p>
-                  </li>
-                  {completed.map((project) => (
-                    <ProjectRow
-                      key={project.id}
-                      project={project}
-                      active={project.id === selectedProjectId}
-                      onSelect={() => onSelectProject(project.id)}
-                      muted
-                    />
-                  ))}
-                </>
-              ) : null}
-            </>
+            filtered.map((project) => (
+              <ProjectRow
+                key={project.id}
+                project={project}
+                active={project.id === selectedProjectId}
+                onSelect={() => onSelectProject(project.id)}
+              />
+            ))
           )}
         </ul>
       </ScrollArea>

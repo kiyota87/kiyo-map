@@ -1,74 +1,78 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CategoryNav } from "@/components/kiyo-map/CategoryNav";
-
 import { ProjectDetail } from "@/components/kiyo-map/ProjectDetail";
-
 import { ProjectList } from "@/components/kiyo-map/ProjectList";
-
 import { RelatedPanel } from "@/components/kiyo-map/RelatedPanel";
-
 import { useKiyoMap } from "@/components/kiyo-map/KiyoMapProvider";
-
 import {
+  activeMapProjects,
   filterProjectsByCategory,
-  partitionProjectsForList,
 } from "@/lib/kiyo-map/computed";
-
-import { ALL_CATEGORY_ID } from "@/lib/kiyo-map/labels";
+import { ALL_CATEGORY_ID, IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
+import type { Project } from "@/lib/kiyo-map/schema";
 
 function pickDefaultProjectId(
-  projects: ReturnType<typeof useKiyoMap>["data"]["projects"],
-
+  projects: Project[],
   categoryId: string,
 ): string | null {
   const filtered = filterProjectsByCategory(
     projects,
-
     categoryId,
-
     ALL_CATEGORY_ID,
   );
+  return filtered[0]?.id ?? null;
+}
 
-  const { active, completed } = partitionProjectsForList(filtered);
-
-  return active[0]?.id ?? completed[0]?.id ?? null;
+function categoryForProject(project: Project): string {
+  return project.category === IDEA_CATEGORY ? IDEA_CATEGORY : project.category;
 }
 
 export function KiyoMapWorkspace() {
-  const { data, hydrated } = useKiyoMap();
+  const { data, hydrated, mapFocusProjectId, consumeMapFocus } = useKiyoMap();
+  const mapProjects = useMemo(
+    () => activeMapProjects(data.projects),
+    [data.projects],
+  );
 
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<string>(ALL_CATEGORY_ID);
-
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
-    () => pickDefaultProjectId(data.projects, ALL_CATEGORY_ID),
+    () => pickDefaultProjectId(mapProjects, ALL_CATEGORY_ID),
   );
+
+  useEffect(() => {
+    if (!hydrated || !mapFocusProjectId) return;
+
+    const project = mapProjects.find((item) => item.id === mapFocusProjectId);
+    if (project) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- focus after add/reopen
+      setSelectedProjectId(project.id);
+      setSelectedCategoryId(categoryForProject(project));
+    }
+    consumeMapFocus();
+  }, [hydrated, mapFocusProjectId, mapProjects, consumeMapFocus]);
 
   const activeProjectId = useMemo(() => {
     if (
       selectedProjectId &&
-      data.projects.some((p) => p.id === selectedProjectId)
+      mapProjects.some((project) => project.id === selectedProjectId)
     ) {
       return selectedProjectId;
     }
-
-    return pickDefaultProjectId(data.projects, selectedCategoryId);
-  }, [data.projects, selectedCategoryId, selectedProjectId]);
+    return pickDefaultProjectId(mapProjects, selectedCategoryId);
+  }, [mapProjects, selectedCategoryId, selectedProjectId]);
 
   const selectedProject = useMemo(
-    () => data.projects.find((p) => p.id === activeProjectId) ?? null,
-
-    [data.projects, activeProjectId],
+    () => mapProjects.find((project) => project.id === activeProjectId) ?? null,
+    [mapProjects, activeProjectId],
   );
 
   const handleDeleteProject = (projectId: string) => {
-    const remaining = data.projects.filter((p) => p.id !== projectId);
-
+    const remaining = mapProjects.filter((project) => project.id !== projectId);
     const nextId = pickDefaultProjectId(remaining, selectedCategoryId);
-
     setSelectedProjectId((current) =>
       current === projectId ? nextId : current,
     );
@@ -86,27 +90,24 @@ export function KiyoMapWorkspace() {
     <div className="flex min-h-0 flex-1 overflow-hidden bg-background">
       <CategoryNav
         categories={data.categories}
-        projects={data.projects}
+        projects={mapProjects}
         selectedCategoryId={selectedCategoryId}
         onSelectCategory={setSelectedCategoryId}
       />
-
       <ProjectList
-        projects={data.projects}
+        projects={mapProjects}
         selectedCategoryId={selectedCategoryId}
         selectedProjectId={activeProjectId}
         onSelectProject={setSelectedProjectId}
       />
-
       <ProjectDetail
         project={selectedProject}
         categories={data.categories}
         onDeleted={handleDeleteProject}
       />
-
       <RelatedPanel
         project={selectedProject}
-        allProjects={data.projects}
+        allProjects={mapProjects}
         onSelectProject={setSelectedProjectId}
       />
     </div>

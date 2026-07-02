@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 const tabs = [
   { href: "/kiyo-map/map", label: "案件マップ" },
+  { href: "/kiyo-map/completed", label: "完了案件" },
   { href: "/kiyo-map/dashboard", label: "ダッシュボード" },
 ] as const;
 

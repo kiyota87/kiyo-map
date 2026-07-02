@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { projectListTitle } from "@/lib/kiyo-map/labels";
 import type { Project } from "@/lib/kiyo-map/schema";
 
 type ShapeIdeasDialogProps = {
@@ -64,7 +65,7 @@ export function ShapeIdeasDialog({
     requestShapeIdeas({
       ideas: ideas.map((idea) => ({
         id: idea.id,
-        title: idea.title,
+        title: idea.title.trim() || idea.memo.slice(0, 48),
         memo: idea.memo,
         createdAt: idea.createdAt,
       })),
@@ -101,7 +102,13 @@ export function ShapeIdeasDialog({
   };
 
   const titleById = useMemo(
-    () => new Map(ideas.map((idea) => [idea.id, idea.title])),
+    () =>
+      new Map(
+        ideas.map((idea) => [
+          idea.id,
+          idea.title.trim() ? idea.title : projectListTitle(idea),
+        ]),
+      ),
     [ideas],
   );
 

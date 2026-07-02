@@ -73,6 +73,20 @@ export function isProjectCompleted(project: Project): boolean {
   return project.status === "done" || project.progress >= 100;
 }
 
+export function activeMapProjects(projects: Project[]): Project[] {
+  return projects.filter((project) => !isProjectCompleted(project));
+}
+
+export function completedProjects(projects: Project[]): Project[] {
+  return projects
+    .filter((project) => isProjectCompleted(project))
+    .sort((a, b) => {
+      const aTime = a.completedAt ?? a.updatedAt;
+      const bTime = b.completedAt ?? b.updatedAt;
+      return bTime.localeCompare(aTime);
+    });
+}
+
 export function partitionProjectsForList(projects: Project[]): {
   active: Project[];
   completed: Project[];

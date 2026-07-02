@@ -15,6 +15,7 @@ import {
   loadKiyoMapData,
   saveKiyoMapData,
 } from "@/lib/kiyo-map/storage";
+import { consumeMapFocus, persistMapFocus } from "@/lib/kiyo-map/map-focus";
 import { IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
 import type { ShapeIdeaPick } from "@/lib/kiyo-map/prompts";
 import type {
@@ -47,6 +48,9 @@ type KiyoMapContextValue = {
     historyNote?: string,
   ) => void;
   deleteProject: (projectId: string) => void;
+  reopenProject: (projectId: string) => void;
+  mapFocusProjectId: string | null;
+  consumeMapFocus: () => void;
   selectRelatedProject: (projectId: string) => string;
 };
 
@@ -66,6 +70,7 @@ function ensureIdeaCategory(categories: string[]): string[] {
 export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
   const [data, setData] = useState<KiyoMapData>(() => loadKiyoMapData(userEmail));
   const [hydrated, setHydrated] = useState(false);
+  const [mapFocusProjectId, setMapFocusProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     const loaded = loadKiyoMapData(userEmail);
@@ -76,6 +81,15 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     });
     setHydrated(true);
   }, [userEmail]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const focusId = consumeMapFocus();
+    if (focusId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- restore cross-page focus
+      setMapFocusProjectId(focusId);
+    }
+  }, [hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -93,7 +107,7 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     const now = new Date().toISOString();
     const project: Project = {
       id: crypto.randomUUID(),
-      title: trimmed.slice(0, 48),
+      title: "",
       status: "idea",
       category: IDEA_CATEGORY,
       priority: "C",
@@ -120,6 +134,8 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
       projects: [project, ...prev.projects],
       categories: ensureIdeaCategory(prev.categories),
     }));
+    setMapFocusProjectId(project.id);
+    persistMapFocus(project.id);
   }, []);
 
   const addInboxMemo = useCallback((text: string) => {
@@ -197,6 +213,10 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
         const planBlock = pick.plan ? `\n\n【進め方】\n${pick.plan}` : "";
         let next: Project = {
           ...project,
+          title:
+            project.title.trim() ||
+            pick.nextAction.slice(0, 48) ||
+            project.memo.slice(0, 48),
           status: "in_progress",
           category: pick.suggestedCategory,
           nextAction: pick.nextAction,
@@ -263,6 +283,37 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     }));
   }, []);
 
+  const reopenProject = useCallback(
+    (projectId: string) => {
+      setData((prev) => {
+        const nextProjects = prev.projects.map((project) => {
+          if (project.id !== projectId) return project;
+          const now = new Date().toISOString();
+          let next: Project = {
+            ...project,
+            status: "in_progress",
+            completedAt: null,
+            progress: project.progress >= 100 ? 90 : project.progress,
+            updatedAt: now,
+          };
+          next = appendProjectHistory(next, "完了から進行中に戻しました");
+          return next;
+        });
+        const nextData = { ...prev, projects: nextProjects };
+        saveKiyoMapData(userEmail, nextData);
+        return nextData;
+      });
+      persistMapFocus(projectId);
+      setMapFocusProjectId(projectId);
+    },
+    [userEmail],
+  );
+
+  const consumeMapFocusCallback = useCallback(() => {
+    setMapFocusProjectId(null);
+    consumeMapFocus();
+  }, []);
+
   const selectRelatedProject = useCallback((projectId: string) => projectId, []);
 
   const value = useMemo<KiyoMapContextValue>(
@@ -276,6 +327,9 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
       applyShapePick,
       updateProject,
       deleteProject,
+      reopenProject,
+      mapFocusProjectId,
+      consumeMapFocus: consumeMapFocusCallback,
       selectRelatedProject,
     }),
     [
@@ -288,6 +342,9 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
       applyShapePick,
       updateProject,
       deleteProject,
+      reopenProject,
+      mapFocusProjectId,
+      consumeMapFocusCallback,
       selectRelatedProject,
     ],
   );

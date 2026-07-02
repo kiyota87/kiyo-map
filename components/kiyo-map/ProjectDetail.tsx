@@ -19,9 +19,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import {
   PROJECT_PRIORITY_LABELS,
   PROJECT_STATUS_LABELS,
+  UNSET_LABEL,
+  isIdeaDraft,
   statusLabel,
 } from "@/lib/kiyo-map/labels";
 import type { Project, ProjectPriority, ProjectStatus } from "@/lib/kiyo-map/schema";
@@ -61,6 +64,8 @@ export function ProjectDetail({
     );
   }
 
+  const draftIdea = isIdeaDraft(project);
+
   const patch = (fields: Partial<Project>, note?: string) => {
     updateProject(project.id, fields, note);
   };
@@ -89,117 +94,195 @@ export function ProjectDetail({
         </div>
         <ScrollArea className="min-h-0 flex-1">
           <div className="flex flex-col gap-4 p-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{project.category}</Badge>
-              <Badge variant="secondary">{statusLabel(project.status)}</Badge>
-              <Badge variant="outline">優先度 {project.priority}</Badge>
-            </div>
+            {draftIdea ? (
+              <>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="secondary">{statusLabel(project.status)}</Badge>
+                </div>
 
-            <InlineFieldRow label="タイトル">
-              <InlineTextField
-                value={project.title}
-                onSave={(title) => patch({ title }, "タイトルを更新")}
-                ariaLabel="案件タイトル"
-              />
-            </InlineFieldRow>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">メモ</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <InlineTextareaField
+                      value={project.memo}
+                      onSave={(memo) => patch({ memo }, "メモを更新")}
+                      ariaLabel="メモ"
+                    />
+                  </CardContent>
+                </Card>
 
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">進捗</span>
-              <div className="flex items-center gap-2">
-                <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${project.progress}%` }}
+                <p className="text-xs text-muted-foreground">
+                  アイディアはメモのみ保存されています。詳細は後から入力できます。
+                </p>
+
+                <Separator />
+
+                <div className="flex flex-col gap-4">
+                  <h4 className="text-sm font-medium">詳細（後から入力）</h4>
+
+                  <InlineFieldRow label="タイトル">
+                    <InlineTextField
+                      value={project.title}
+                      onSave={(title) => patch({ title }, "タイトルを更新")}
+                      ariaLabel="案件タイトル"
+                      placeholder={UNSET_LABEL}
+                    />
+                  </InlineFieldRow>
+
+                  <InlineFieldRow label="締切">
+                    <InlineDateField
+                      value={project.deadline ?? ""}
+                      onSave={(deadline) =>
+                        patch({ deadline: deadline || null }, "締切を更新")
+                      }
+                      ariaLabel="締切"
+                    />
+                  </InlineFieldRow>
+
+                  <InlineFieldRow label="次のアクション">
+                    <InlineTextField
+                      value={project.nextAction}
+                      onSave={(nextAction) =>
+                        patch({ nextAction }, "次のアクションを更新")
+                      }
+                      ariaLabel="次のアクション"
+                      placeholder={UNSET_LABEL}
+                    />
+                  </InlineFieldRow>
+
+                  <InlineFieldRow label="優先度">
+                    <InlineSelectField
+                      value=""
+                      options={Object.values(PROJECT_PRIORITY_LABELS)}
+                      onSave={(priority) =>
+                        patch(
+                          { priority: priority as ProjectPriority },
+                          `優先度を ${priority} に変更`,
+                        )
+                      }
+                      ariaLabel="優先度"
+                      placeholder={UNSET_LABEL}
+                    />
+                  </InlineFieldRow>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline">{project.category}</Badge>
+                  <Badge variant="secondary">{statusLabel(project.status)}</Badge>
+                  <Badge variant="outline">優先度 {project.priority}</Badge>
+                </div>
+
+                <InlineFieldRow label="タイトル">
+                  <InlineTextField
+                    value={project.title}
+                    onSave={(title) => patch({ title }, "タイトルを更新")}
+                    ariaLabel="案件タイトル"
+                  />
+                </InlineFieldRow>
+
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">進捗</span>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${project.progress}%` }}
+                      />
+                    </div>
+                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                      {project.progress}%
+                    </span>
+                  </div>
+                  <InlineTextField
+                    value={String(project.progress)}
+                    inputType="number"
+                    onSave={(raw) => {
+                      const n = Math.min(100, Math.max(0, Number(raw) || 0));
+                      patch({ progress: n }, `進捗を ${n}% に更新`);
+                    }}
+                    ariaLabel="進捗率"
+                    className="max-w-24"
                   />
                 </div>
-                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                  {project.progress}%
-                </span>
-              </div>
-              <InlineTextField
-                value={String(project.progress)}
-                inputType="number"
-                onSave={(raw) => {
-                  const n = Math.min(100, Math.max(0, Number(raw) || 0));
-                  patch({ progress: n }, `進捗を ${n}% に更新`);
-                }}
-                ariaLabel="進捗率"
-                className="max-w-24"
-              />
-            </div>
 
-            <InlineFieldRow label="締切">
-              <InlineDateField
-                value={project.deadline ?? ""}
-                onSave={(deadline) =>
-                  patch({ deadline: deadline || null }, "締切を更新")
-                }
-                ariaLabel="締切"
-              />
-            </InlineFieldRow>
+                <InlineFieldRow label="締切">
+                  <InlineDateField
+                    value={project.deadline ?? ""}
+                    onSave={(deadline) =>
+                      patch({ deadline: deadline || null }, "締切を更新")
+                    }
+                    ariaLabel="締切"
+                  />
+                </InlineFieldRow>
 
-            <InlineFieldRow label="次のアクション">
-              <InlineTextField
-                value={project.nextAction}
-                onSave={(nextAction) =>
-                  patch({ nextAction }, "次のアクションを更新")
-                }
-                ariaLabel="次のアクション"
-              />
-            </InlineFieldRow>
+                <InlineFieldRow label="次のアクション">
+                  <InlineTextField
+                    value={project.nextAction}
+                    onSave={(nextAction) =>
+                      patch({ nextAction }, "次のアクションを更新")
+                    }
+                    ariaLabel="次のアクション"
+                  />
+                </InlineFieldRow>
 
-            <InlineFieldRow label="状態">
-              <InlineSelectField
-                value={statusLabel(project.status)}
-                options={Object.values(PROJECT_STATUS_LABELS)}
-                onSave={(label) => {
-                  const status = (
-                    Object.entries(PROJECT_STATUS_LABELS) as [
-                      ProjectStatus,
-                      string,
-                    ][]
-                  ).find(([, v]) => v === label)?.[0];
-                  if (status) patch({ status }, `状態を ${label} に変更`);
-                }}
-                ariaLabel="状態"
-              />
-            </InlineFieldRow>
+                <InlineFieldRow label="状態">
+                  <InlineSelectField
+                    value={statusLabel(project.status)}
+                    options={Object.values(PROJECT_STATUS_LABELS)}
+                    onSave={(label) => {
+                      const status = (
+                        Object.entries(PROJECT_STATUS_LABELS) as [
+                          ProjectStatus,
+                          string,
+                        ][]
+                      ).find(([, v]) => v === label)?.[0];
+                      if (status) patch({ status }, `状態を ${label} に変更`);
+                    }}
+                    ariaLabel="状態"
+                  />
+                </InlineFieldRow>
 
-            <InlineFieldRow label="カテゴリ">
-              <InlineSelectField
-                value={project.category}
-                options={categories}
-                onSave={(category) => patch({ category }, "カテゴリを変更")}
-                ariaLabel="カテゴリ"
-              />
-            </InlineFieldRow>
+                <InlineFieldRow label="カテゴリ">
+                  <InlineSelectField
+                    value={project.category}
+                    options={categories}
+                    onSave={(category) => patch({ category }, "カテゴリを変更")}
+                    ariaLabel="カテゴリ"
+                  />
+                </InlineFieldRow>
 
-            <InlineFieldRow label="優先度">
-              <InlineSelectField
-                value={project.priority}
-                options={Object.values(PROJECT_PRIORITY_LABELS)}
-                onSave={(priority) =>
-                  patch(
-                    { priority: priority as ProjectPriority },
-                    `優先度を ${priority} に変更`,
-                  )
-                }
-                ariaLabel="優先度"
-              />
-            </InlineFieldRow>
+                <InlineFieldRow label="優先度">
+                  <InlineSelectField
+                    value={project.priority}
+                    options={Object.values(PROJECT_PRIORITY_LABELS)}
+                    onSave={(priority) =>
+                      patch(
+                        { priority: priority as ProjectPriority },
+                        `優先度を ${priority} に変更`,
+                      )
+                    }
+                    ariaLabel="優先度"
+                  />
+                </InlineFieldRow>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">メモ</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <InlineTextareaField
-                  value={project.memo}
-                  onSave={(memo) => patch({ memo }, "メモを更新")}
-                  ariaLabel="メモ"
-                />
-              </CardContent>
-            </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">メモ</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <InlineTextareaField
+                      value={project.memo}
+                      onSave={(memo) => patch({ memo }, "メモを更新")}
+                      ariaLabel="メモ"
+                    />
+                  </CardContent>
+                </Card>
+              </>
+            )}
 
             <div className="flex flex-col gap-2">
               <h4 className="text-sm font-medium">更新履歴</h4>
@@ -229,7 +312,7 @@ export function ProjectDetail({
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         title="案件を削除"
-        itemName={project.title}
+        itemName={project.title.trim() || UNSET_LABEL}
         onConfirm={handleDelete}
       />
     </>

@@ -1,4 +1,4 @@
-import type { ProjectStatus, ProjectPriority } from "@/lib/kiyo-map/schema";
+import type { ProjectStatus, ProjectPriority, Project } from "@/lib/kiyo-map/schema";
 
 export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
   idea: "アイディア",
@@ -21,4 +21,18 @@ export const IDEA_CATEGORY = "アイディア";
 
 export function statusLabel(status: ProjectStatus): string {
   return PROJECT_STATUS_LABELS[status];
+}
+
+/** 未設定フィールドの表示ラベル */
+export const UNSET_LABEL = "未入力";
+
+export function projectListTitle(project: Pick<Project, "title">): string {
+  return project.title.trim() || UNSET_LABEL;
+}
+
+/** クイックメモ直後など、詳細未入力のアイディア */
+export function isIdeaDraft(
+  project: Pick<Project, "status" | "title">,
+): boolean {
+  return project.status === "idea" && !project.title.trim();
 }

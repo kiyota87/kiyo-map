@@ -10,6 +10,7 @@ import {
   completedThisMonth,
   ideaProjects,
 } from "@/lib/kiyo-map/computed";
+import { projectListTitle } from "@/lib/kiyo-map/labels";
 
 function currentMonth(): string {
   const d = new Date();
@@ -99,7 +100,7 @@ export function KiyoMapDashboard() {
               <div className="flex flex-wrap gap-2">
                 {ideas.map((project) => (
                   <Badge key={project.id} variant="secondary">
-                    {project.title}
+                    {projectListTitle(project)}
                   </Badge>
                 ))}
               </div>

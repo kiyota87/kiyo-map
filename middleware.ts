@@ -11,5 +11,9 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/kiyo-ai-orchestration/:path*", "/api/kiyo/:path*"],
+  matcher: [
+    "/kiyo-ai-orchestration/:path*",
+    "/api/kiyo/:path*",
+    "/kiyo-map/:path*",
+  ],
 };

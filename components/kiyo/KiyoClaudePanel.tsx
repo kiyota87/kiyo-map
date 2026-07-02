@@ -47,6 +47,9 @@ export function KiyoClaudePanel({
         <span className="text-sm font-medium text-[var(--kiyo-accent-yellow)]">
           Claude
         </span>
+        <span className="kiyo-badge px-2 py-0.5 text-[10px]">
+          UI only · 出力 Gemini
+        </span>
         <div className="flex gap-1">
           {(["pptx", "svg"] as OutputType[]).map((type) => (
             <button
@@ -105,7 +108,8 @@ export function KiyoClaudePanel({
             <div className="flex flex-col gap-3">
               {messages.length === 0 ? (
                 <p className="text-sm text-[var(--kiyo-text-muted)]">
-                  Claude に PPTX / 図解の生成を依頼してください。
+                  Claude パネル（UI）で PPTX / 図解を生成します。実際の生成は Gemini
+                  が担当します。
                 </p>
               ) : null}
               {messages.map((message) => (

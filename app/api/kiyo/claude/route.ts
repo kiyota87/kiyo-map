@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { buildClaudeSystemPrompt } from "@/lib/kiyo/prompts";
-import { extractJsonPayload, extractSvg } from "@/lib/kiyo/parsers";
+import { parseOutputContent } from "@/lib/kiyo/output-response";
 import { requireAuth } from "@/lib/kiyo/require-auth";
 import type { ApiChatMessage, OutputType } from "@/lib/kiyo/types";
 
@@ -31,8 +31,11 @@ export async function POST(request: Request) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY is not configured" },
-      { status: 500 },
+      {
+        error:
+          "ANTHROPIC_API_KEY is not configured. Use /api/kiyo/output (Gemini) for local testing.",
+      },
+      { status: 503 },
     );
   }
 
@@ -69,42 +72,15 @@ export async function POST(request: Request) {
       .map((block) => block.text)
       .join("\n");
 
-    if (!content) {
-      return NextResponse.json({ error: "Empty Claude response" }, { status: 500 });
-    }
-
-    if (outputType === "pptx") {
-      const payload = extractJsonPayload(content);
-      if (!payload) {
-        return NextResponse.json(
-          { error: "Failed to parse PPTX JSON from Claude response", content },
-          { status: 422 },
-        );
-      }
-      return NextResponse.json({
-        content,
-        artifact: {
-          type: "pptx",
-          rawContent: JSON.stringify(payload),
-        },
-      });
-    }
-
-    const svg = extractSvg(content);
-    if (!svg) {
+    const parsed = parseOutputContent(content, outputType, "claude");
+    if ("error" in parsed) {
       return NextResponse.json(
-        { error: "Failed to parse SVG from Claude response", content },
-        { status: 422 },
+        { error: parsed.error, content: parsed.content },
+        { status: parsed.status },
       );
     }
 
-    return NextResponse.json({
-      content,
-      artifact: {
-        type: "svg",
-        rawContent: svg,
-      },
-    });
+    return NextResponse.json(parsed);
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Claude request failed";

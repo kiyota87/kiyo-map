@@ -54,6 +54,40 @@ export async function runGeminiTask(
   return data;
 }
 
+export async function requestOutput(params: {
+  messages: ApiChatMessage[];
+  outputType: OutputType;
+  researchSummary: string | null;
+}): Promise<{
+  content: string;
+  provider?: string;
+  artifact?: { type: OutputType; rawContent: string };
+}> {
+  const response = await fetch("/api/kiyo/output", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+  });
+
+  const data = (await response.json()) as {
+    content?: string;
+    provider?: string;
+    artifact?: { type: OutputType; rawContent: string };
+    error?: string;
+  };
+
+  if (!response.ok) {
+    throw new Error(data.error ?? "Output request failed");
+  }
+
+  return {
+    content: data.content ?? "",
+    provider: data.provider,
+    artifact: data.artifact,
+  };
+}
+
+/** @deprecated Phase 2: ANTHROPIC_API_KEY 設定時のみ /api/kiyo/claude を直接使う */
 export async function requestClaude(params: {
   messages: ApiChatMessage[];
   outputType: OutputType;
@@ -62,24 +96,5 @@ export async function requestClaude(params: {
   content: string;
   artifact?: { type: OutputType; rawContent: string };
 }> {
-  const response = await fetch("/api/kiyo/claude", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params),
-  });
-
-  const data = (await response.json()) as {
-    content?: string;
-    artifact?: { type: OutputType; rawContent: string };
-    error?: string;
-  };
-
-  if (!response.ok) {
-    throw new Error(data.error ?? "Claude request failed");
-  }
-
-  return {
-    content: data.content ?? "",
-    artifact: data.artifact,
-  };
+  return requestOutput(params);
 }

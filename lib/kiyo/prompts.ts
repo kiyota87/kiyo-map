@@ -27,7 +27,7 @@ export function buildTitlePrompt(researchLog: string): string {
 ${researchLog}`;
 }
 
-export function buildClaudeSystemPrompt(outputType: OutputType): string {
+export function buildOutputSystemPrompt(outputType: OutputType): string {
   if (outputType === "pptx") {
     return `You are an output assistant for slide decks.
 Return ONLY a fenced JSON code block with this schema:
@@ -54,6 +54,9 @@ Rules:
 - SVG must be self-contained with xmlns.
 - Do not include markdown outside the SVG code block.`;
 }
+
+/** @deprecated Phase 2 Claude API 用。ローカル検証は buildOutputSystemPrompt + /api/kiyo/output */
+export const buildClaudeSystemPrompt = buildOutputSystemPrompt;
 
 export function formatResearchLog(
   messages: { role: string; content: string }[],

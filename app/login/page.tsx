@@ -19,7 +19,8 @@ function LoginContent() {
           AIオーケストレーション・kiyoワークスペース
         </h1>
         <p className="max-w-md text-sm text-[#c8c0f0]">
-          Google アカウントでログインしてください。許可されたメールアドレスのみアクセスできます。
+          Google アカウントでログインしてください。許可されたメールアドレスのみ
+          kiyo / kiyo-map にアクセスできます。
         </p>
         {error ? (
           <p className="text-sm text-red-300">

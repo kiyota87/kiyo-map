@@ -8,7 +8,7 @@ import { KiyoResearchPanel } from "@/components/kiyo/KiyoResearchPanel";
 import { KiyoSidebar } from "@/components/kiyo/KiyoSidebar";
 import { KiyoTopBar } from "@/components/kiyo/KiyoTopBar";
 import {
-  requestClaude,
+  requestOutput,
   runGeminiTask,
   streamResearch,
 } from "@/lib/kiyo/client-api";
@@ -254,7 +254,7 @@ export function KiyoWorkspace({ userEmail }: KiyoWorkspaceProps) {
     setClaudeLoading(true);
 
     try {
-      const result = await requestClaude({
+      const result = await requestOutput({
         messages: apiMessages,
         outputType,
         researchSummary: activeSession.researchSummary,

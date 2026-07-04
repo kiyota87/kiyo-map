@@ -1,0 +1,264 @@
+/**
+ * きよた案件管理・アイディアマップ — デザイントークン SSoT
+ *
+ * ベース: #392171 / アクセント: #fed100
+ * カテゴリ色は lib/kiyo-map/category-colors.ts と対応
+ */
+
+[data-workspace="kiyo-map"] {
+  --kiyo-map-base: #392171;
+  --kiyo-map-accent: #fed100;
+
+  --kiyo-map-bg-deepest: #1e1238;
+  --kiyo-map-bg-panel: #2a1848;
+  --kiyo-map-bg-card: #392171;
+  --kiyo-map-bg-raised: #452388;
+  --kiyo-map-border: #523099;
+
+  --kiyo-map-text-primary: #f8f4ff;
+  --kiyo-map-text-secondary: #ddd4f5;
+  --kiyo-map-text-muted: #b09fd9;
+  --kiyo-map-text-faint: #8a78b8;
+
+  --kiyo-map-cat-idea: #fed100;
+  --kiyo-map-cat-hr: #ff8fab;
+  --kiyo-map-cat-ai: #7dd3fc;
+  --kiyo-map-cat-brand: #d4b4ff;
+  --kiyo-map-cat-it: #6ee7b7;
+  --kiyo-map-cat-admin: #fdba74;
+  --kiyo-map-cat-default: #c8b8e8;
+
+  --kiyo-map-radius-lg: 8px;
+  --kiyo-map-radius-sm: 4px;
+
+  color: var(--kiyo-map-text-primary);
+  background: var(--kiyo-map-bg-deepest);
+  min-height: 100vh;
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-panel {
+  background: var(--kiyo-map-bg-panel);
+  border: 0.5px solid var(--kiyo-map-border);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-card {
+  background: var(--kiyo-map-bg-card);
+  border: 0.5px solid var(--kiyo-map-border);
+  border-radius: var(--kiyo-map-radius-lg);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-badge {
+  border-radius: var(--kiyo-map-radius-sm);
+  border: 0.5px solid var(--kiyo-map-border);
+  background: color-mix(in srgb, var(--kiyo-map-base) 55%, var(--kiyo-map-bg-raised));
+  color: var(--kiyo-map-text-secondary);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-btn-primary {
+  background: var(--kiyo-map-accent);
+  color: var(--kiyo-map-bg-deepest);
+  border-radius: var(--kiyo-map-radius-sm);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-btn-primary:hover {
+  background: color-mix(in srgb, var(--kiyo-map-accent) 88%, white);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-tab {
+  border-radius: var(--kiyo-map-radius-sm);
+  color: var(--kiyo-map-text-muted);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-tab-active {
+  background: var(--kiyo-map-accent);
+  color: var(--kiyo-map-bg-deepest);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-input {
+  background: var(--kiyo-map-bg-card);
+  border: 0.5px solid var(--kiyo-map-border);
+  color: var(--kiyo-map-text-primary);
+  border-radius: var(--kiyo-map-radius-lg);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-input::placeholder {
+  color: var(--kiyo-map-text-faint);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--kiyo-map-radius-sm);
+  border: 1px solid var(--category-color, var(--kiyo-map-cat-default));
+  background: color-mix(
+    in srgb,
+    var(--category-color, var(--kiyo-map-cat-default)) 18%,
+    var(--kiyo-map-bg-card)
+  );
+  color: var(--category-color, var(--kiyo-map-cat-default));
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  padding: 0.125rem 0.5rem;
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge[data-category="アイディア"] {
+  --category-color: var(--kiyo-map-cat-idea);
+  color: var(--kiyo-map-bg-deepest);
+  background: color-mix(in srgb, var(--kiyo-map-cat-idea) 92%, white);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge[data-category="HR/労務"] {
+  --category-color: var(--kiyo-map-cat-hr);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge[data-category="AI推進"] {
+  --category-color: var(--kiyo-map-cat-ai);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge[data-category="ブランディング"] {
+  --category-color: var(--kiyo-map-cat-brand);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge[data-category="IT/セキュリティ"] {
+  --category-color: var(--kiyo-map-cat-it);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-badge[data-category="総務"] {
+  --category-color: var(--kiyo-map-cat-admin);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot {
+  background: var(--category-color, var(--kiyo-map-cat-default));
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-category="アイディア"] {
+  --category-color: var(--kiyo-map-cat-idea);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-category="HR/労務"] {
+  --category-color: var(--kiyo-map-cat-hr);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-category="AI推進"] {
+  --category-color: var(--kiyo-map-cat-ai);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-category="ブランディング"] {
+  --category-color: var(--kiyo-map-cat-brand);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-category="IT/セキュリティ"] {
+  --category-color: var(--kiyo-map-cat-it);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-category="総務"] {
+  --category-color: var(--kiyo-map-cat-admin);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-category-dot[data-urgent="true"] {
+  box-shadow: 0 0 0 2px var(--kiyo-map-bg-panel), 0 0 0 3.5px #f87171;
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item {
+  border-left: 3px solid transparent;
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="アイディア"] {
+  --category-color: var(--kiyo-map-cat-idea);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="HR/労務"] {
+  --category-color: var(--kiyo-map-cat-hr);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="AI推進"] {
+  --category-color: var(--kiyo-map-cat-ai);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="ブランディング"] {
+  --category-color: var(--kiyo-map-cat-brand);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="IT/セキュリティ"] {
+  --category-color: var(--kiyo-map-cat-it);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="総務"] {
+  --category-color: var(--kiyo-map-cat-admin);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item:not([data-category="__all__"]) {
+  border-left-color: var(--category-color, var(--kiyo-map-cat-default));
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-selected="true"]:not([data-category="__all__"]) {
+  background: color-mix(
+    in srgb,
+    var(--category-color, var(--kiyo-map-cat-default)) 14%,
+    var(--kiyo-map-bg-card)
+  );
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="アイディア"][data-selected="true"] {
+  background: color-mix(in srgb, var(--kiyo-map-cat-idea) 22%, var(--kiyo-map-bg-card));
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-count {
+  border-radius: var(--kiyo-map-radius-sm);
+  border: 1px solid var(--category-color, var(--kiyo-map-border));
+  background: color-mix(
+    in srgb,
+    var(--category-color, var(--kiyo-map-cat-default)) 12%,
+    transparent
+  );
+  color: var(--kiyo-map-text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  padding: 0 0.375rem;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="アイディア"] .kiyo-map-cat-nav-count {
+  --category-color: var(--kiyo-map-cat-idea);
+  color: var(--kiyo-map-bg-deepest);
+  background: color-mix(in srgb, var(--kiyo-map-cat-idea) 75%, transparent);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="HR/労務"] .kiyo-map-cat-nav-count {
+  --category-color: var(--kiyo-map-cat-hr);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="AI推進"] .kiyo-map-cat-nav-count {
+  --category-color: var(--kiyo-map-cat-ai);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="ブランディング"] .kiyo-map-cat-nav-count {
+  --category-color: var(--kiyo-map-cat-brand);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="IT/セキュリティ"] .kiyo-map-cat-nav-count {
+  --category-color: var(--kiyo-map-cat-it);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-cat-nav-item[data-category="総務"] .kiyo-map-cat-nav-count {
+  --category-color: var(--kiyo-map-cat-admin);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-status-badge {
+  border-radius: var(--kiyo-map-radius-sm);
+  border: 0.5px solid var(--kiyo-map-border);
+  background: var(--kiyo-map-bg-raised);
+  color: var(--kiyo-map-text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  padding: 0.125rem 0.5rem;
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-detail-pane {
+  background: var(--kiyo-map-bg-deepest);
+}
+
+[data-workspace="kiyo-map"] .kiyo-map-pane-header {
+  border-bottom: 0.5px solid var(--kiyo-map-border);
+}

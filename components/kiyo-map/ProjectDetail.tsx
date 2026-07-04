@@ -15,7 +15,7 @@ import {
   InlineTextareaField,
   InlineTextField,
 } from "@/components/primitives";
-import { Badge } from "@/components/ui/badge";
+import { CategoryBadge } from "@/components/kiyo-map/CategoryBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -53,12 +53,12 @@ export function ProjectDetail({
 
   if (!project) {
     return (
-      <section className="flex min-w-0 flex-1 flex-col border-r border-border bg-background">
-        <div className="flex h-12 shrink-0 items-center border-b border-border px-3">
-          <h3 className="text-sm font-medium">詳細</h3>
+      <section className="kiyo-map-detail-pane flex min-w-0 flex-[3] flex-col">
+        <div className="kiyo-map-pane-header flex h-12 shrink-0 items-center px-3">
+          <h3 className="text-sm font-medium text-[var(--kiyo-map-text-primary)]">??</h3>
         </div>
-        <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
-          案件を選択してください
+        <div className="flex flex-1 items-center justify-center p-6 text-sm text-[var(--kiyo-map-text-muted)]">
+          ???????????
         </div>
       </section>
     );
@@ -74,19 +74,19 @@ export function ProjectDetail({
     deleteProject(project.id);
     onDeleted?.(project.id);
     setDeleteOpen(false);
-    toast.success("案件を削除しました");
+    toast.success("?????????");
   };
 
   return (
     <>
-      <section className="flex min-w-0 flex-1 flex-col border-r border-border bg-background">
-        <div className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-3">
-          <h3 className="text-sm font-medium">詳細</h3>
+      <section className="kiyo-map-detail-pane flex min-w-0 flex-[3] flex-col">
+        <div className="kiyo-map-pane-header flex h-12 shrink-0 items-center justify-between gap-2 px-3">
+          <h3 className="text-sm font-medium text-[var(--kiyo-map-text-primary)]">??</h3>
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
-            aria-label="案件を削除"
+            aria-label="?????"
             onClick={() => setDeleteOpen(true)}
           >
             <Trash2 className="size-4" />
@@ -97,72 +97,72 @@ export function ProjectDetail({
             {draftIdea ? (
               <>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary">{statusLabel(project.status)}</Badge>
+                  <span className="kiyo-map-status-badge">{statusLabel(project.status)}</span>
                 </div>
 
-                <Card>
+                <Card className="kiyo-map-card border-0 shadow-none">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">メモ</CardTitle>
+                    <CardTitle className="text-sm">??</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <InlineTextareaField
                       value={project.memo}
-                      onSave={(memo) => patch({ memo }, "メモを更新")}
-                      ariaLabel="メモ"
+                      onSave={(memo) => patch({ memo }, "?????")}
+                      ariaLabel="??"
                     />
                   </CardContent>
                 </Card>
 
-                <p className="text-xs text-muted-foreground">
-                  アイディアはメモのみ保存されています。詳細は後から入力できます。
+                <p className="text-xs text-[var(--kiyo-map-text-muted)]">
+                  ????????????????????????????????
                 </p>
 
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <h4 className="text-sm font-medium">詳細（後から入力）</h4>
+                  <h4 className="text-sm font-medium">?????????</h4>
 
-                  <InlineFieldRow label="タイトル">
+                  <InlineFieldRow label="????">
                     <InlineTextField
                       value={project.title}
-                      onSave={(title) => patch({ title }, "タイトルを更新")}
-                      ariaLabel="案件タイトル"
+                      onSave={(title) => patch({ title }, "???????")}
+                      ariaLabel="??????"
                       placeholder={UNSET_LABEL}
                     />
                   </InlineFieldRow>
 
-                  <InlineFieldRow label="締切">
+                  <InlineFieldRow label="??">
                     <InlineDateField
                       value={project.deadline ?? ""}
                       onSave={(deadline) =>
-                        patch({ deadline: deadline || null }, "締切を更新")
+                        patch({ deadline: deadline || null }, "?????")
                       }
-                      ariaLabel="締切"
+                      ariaLabel="??"
                     />
                   </InlineFieldRow>
 
-                  <InlineFieldRow label="次のアクション">
+                  <InlineFieldRow label="???????">
                     <InlineTextField
                       value={project.nextAction}
                       onSave={(nextAction) =>
-                        patch({ nextAction }, "次のアクションを更新")
+                        patch({ nextAction }, "??????????")
                       }
-                      ariaLabel="次のアクション"
+                      ariaLabel="???????"
                       placeholder={UNSET_LABEL}
                     />
                   </InlineFieldRow>
 
-                  <InlineFieldRow label="優先度">
+                  <InlineFieldRow label="???">
                     <InlineSelectField
                       value=""
                       options={Object.values(PROJECT_PRIORITY_LABELS)}
                       onSave={(priority) =>
                         patch(
                           { priority: priority as ProjectPriority },
-                          `優先度を ${priority} に変更`,
+                          `???? ${priority} ???`,
                         )
                       }
-                      ariaLabel="優先度"
+                      ariaLabel="???"
                       placeholder={UNSET_LABEL}
                     />
                   </InlineFieldRow>
@@ -171,21 +171,21 @@ export function ProjectDetail({
             ) : (
               <>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="outline">{project.category}</Badge>
-                  <Badge variant="secondary">{statusLabel(project.status)}</Badge>
-                  <Badge variant="outline">優先度 {project.priority}</Badge>
+                  <CategoryBadge category={project.category} />
+                  <span className="kiyo-map-status-badge">{statusLabel(project.status)}</span>
+                  <span className="kiyo-map-status-badge">??? {project.priority}</span>
                 </div>
 
-                <InlineFieldRow label="タイトル">
+                <InlineFieldRow label="????">
                   <InlineTextField
                     value={project.title}
-                    onSave={(title) => patch({ title }, "タイトルを更新")}
-                    ariaLabel="案件タイトル"
+                    onSave={(title) => patch({ title }, "???????")}
+                    ariaLabel="??????"
                   />
                 </InlineFieldRow>
 
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">進捗</span>
+                  <span className="text-xs text-[var(--kiyo-map-text-muted)]">??</span>
                   <div className="flex items-center gap-2">
                     <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
                       <div
@@ -202,34 +202,34 @@ export function ProjectDetail({
                     inputType="number"
                     onSave={(raw) => {
                       const n = Math.min(100, Math.max(0, Number(raw) || 0));
-                      patch({ progress: n }, `進捗を ${n}% に更新`);
+                      patch({ progress: n }, `??? ${n}% ???`);
                     }}
-                    ariaLabel="進捗率"
+                    ariaLabel="???"
                     className="max-w-24"
                   />
                 </div>
 
-                <InlineFieldRow label="締切">
+                <InlineFieldRow label="??">
                   <InlineDateField
                     value={project.deadline ?? ""}
                     onSave={(deadline) =>
-                      patch({ deadline: deadline || null }, "締切を更新")
+                      patch({ deadline: deadline || null }, "?????")
                     }
-                    ariaLabel="締切"
+                    ariaLabel="??"
                   />
                 </InlineFieldRow>
 
-                <InlineFieldRow label="次のアクション">
+                <InlineFieldRow label="???????">
                   <InlineTextField
                     value={project.nextAction}
                     onSave={(nextAction) =>
-                      patch({ nextAction }, "次のアクションを更新")
+                      patch({ nextAction }, "??????????")
                     }
-                    ariaLabel="次のアクション"
+                    ariaLabel="???????"
                   />
                 </InlineFieldRow>
 
-                <InlineFieldRow label="状態">
+                <InlineFieldRow label="??">
                   <InlineSelectField
                     value={statusLabel(project.status)}
                     options={Object.values(PROJECT_STATUS_LABELS)}
@@ -240,44 +240,44 @@ export function ProjectDetail({
                           string,
                         ][]
                       ).find(([, v]) => v === label)?.[0];
-                      if (status) patch({ status }, `状態を ${label} に変更`);
+                      if (status) patch({ status }, `??? ${label} ???`);
                     }}
-                    ariaLabel="状態"
+                    ariaLabel="??"
                   />
                 </InlineFieldRow>
 
-                <InlineFieldRow label="カテゴリ">
+                <InlineFieldRow label="????">
                   <InlineSelectField
                     value={project.category}
                     options={categories}
-                    onSave={(category) => patch({ category }, "カテゴリを変更")}
-                    ariaLabel="カテゴリ"
+                    onSave={(category) => patch({ category }, "???????")}
+                    ariaLabel="????"
                   />
                 </InlineFieldRow>
 
-                <InlineFieldRow label="優先度">
+                <InlineFieldRow label="???">
                   <InlineSelectField
                     value={project.priority}
                     options={Object.values(PROJECT_PRIORITY_LABELS)}
                     onSave={(priority) =>
                       patch(
                         { priority: priority as ProjectPriority },
-                        `優先度を ${priority} に変更`,
+                        `???? ${priority} ???`,
                       )
                     }
-                    ariaLabel="優先度"
+                    ariaLabel="???"
                   />
                 </InlineFieldRow>
 
-                <Card>
+                <Card className="kiyo-map-card border-0 shadow-none">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">メモ</CardTitle>
+                    <CardTitle className="text-sm">??</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <InlineTextareaField
                       value={project.memo}
-                      onSave={(memo) => patch({ memo }, "メモを更新")}
-                      ariaLabel="メモ"
+                      onSave={(memo) => patch({ memo }, "?????")}
+                      ariaLabel="??"
                     />
                   </CardContent>
                 </Card>
@@ -285,17 +285,17 @@ export function ProjectDetail({
             )}
 
             <div className="flex flex-col gap-2">
-              <h4 className="text-sm font-medium">更新履歴</h4>
+              <h4 className="text-sm font-medium">????</h4>
               {project.history.length === 0 ? (
-                <p className="text-sm text-muted-foreground">履歴はありません</p>
+                <p className="text-sm text-[var(--kiyo-map-text-muted)]">????????</p>
               ) : (
                 <ul className="flex flex-col gap-2">
                   {project.history.map((entry, index) => (
                     <li
                       key={`${entry.date}-${index}`}
-                      className="flex flex-col gap-0.5 rounded-lg border border-border bg-card p-2"
+                      className="kiyo-map-card flex flex-col gap-0.5 p-2"
                     >
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-[var(--kiyo-map-text-muted)]">
                         {formatDateTime(entry.date)}
                       </span>
                       <span className="text-sm">{entry.content}</span>
@@ -311,7 +311,7 @@ export function ProjectDetail({
       <DeleteConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title="案件を削除"
+        title="?????"
         itemName={project.title.trim() || UNSET_LABEL}
         onConfirm={handleDelete}
       />

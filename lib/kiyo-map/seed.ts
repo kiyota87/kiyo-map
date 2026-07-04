@@ -1,4 +1,5 @@
 import type { KiyoMapData } from "@/lib/kiyo-map/schema";
+import { KIYO_MAP_WORKSPACE_NAME } from "@/lib/kiyo-map/branding";
 
 const now = "2026-07-01T09:00:00.000Z";
 const weekAgo = "2026-06-24T10:00:00.000Z";
@@ -6,7 +7,7 @@ const weekAgo = "2026-06-24T10:00:00.000Z";
 export const DEFAULT_KIYO_MAP_DATA: KiyoMapData = {
   version: 1,
   workspace: {
-    name: "きよたアイディア実行マップ",
+    name: KIYO_MAP_WORKSPACE_NAME,
     icon: "map",
   },
   categories: [

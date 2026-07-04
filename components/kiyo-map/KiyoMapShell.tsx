@@ -16,12 +16,21 @@ export function KiyoMapShell({ userEmail, children }: KiyoMapShellProps) {
     <KiyoMapProvider userEmail={userEmail}>
       <div
         data-workspace="kiyo-map"
-        className="flex h-screen w-full flex-col overflow-hidden bg-background text-foreground"
+        className="flex h-screen w-full flex-col overflow-hidden"
       >
         <KiyoMapHeader />
         <div className="flex min-h-0 flex-1 flex-col">{children}</div>
         <KiyoMapFooter />
-        <Toaster richColors closeButton />
+        <Toaster
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: "#392171",
+              border: "0.5px solid #523099",
+              color: "#f8f4ff",
+            },
+          }}
+        />
       </div>
     </KiyoMapProvider>
   );

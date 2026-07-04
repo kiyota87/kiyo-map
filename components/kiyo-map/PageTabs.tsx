@@ -23,10 +23,10 @@ export function PageTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "rounded-lg px-3 py-1.5 text-sm transition-colors",
+              "kiyo-map-tab px-3 py-1.5 text-sm transition-colors",
               active
-                ? "bg-secondary font-medium text-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "kiyo-map-tab-active font-medium"
+                : "hover:text-[var(--kiyo-map-text-primary)]",
             )}
           >
             {tab.label}

@@ -16,6 +16,7 @@ import {
   saveKiyoMapData,
 } from "@/lib/kiyo-map/storage";
 import { consumeMapFocus, persistMapFocus } from "@/lib/kiyo-map/map-focus";
+import { normalizeWorkspaceName } from "@/lib/kiyo-map/branding";
 import { IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
 import type { ShapeIdeaPick } from "@/lib/kiyo-map/prompts";
 import type {
@@ -77,6 +78,10 @@ export function KiyoMapProvider({ userEmail, children }: KiyoMapProviderProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate persisted data
     setData({
       ...loaded,
+      workspace: {
+        ...loaded.workspace,
+        name: normalizeWorkspaceName(loaded.workspace.name),
+      },
       categories: ensureIdeaCategory(loaded.categories),
     });
     setHydrated(true);

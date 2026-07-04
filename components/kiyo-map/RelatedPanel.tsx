@@ -1,13 +1,13 @@
 "use client";
 
+import { CategoryDot } from "@/components/kiyo-map/CategoryBadge";
 import { useKiyoMap } from "@/components/kiyo-map/KiyoMapProvider";
-import {
-  InlineTextareaField,
-} from "@/components/primitives";
+import { InlineTextareaField } from "@/components/primitives";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { projectListTitle } from "@/lib/kiyo-map/labels";
 import type { Project } from "@/lib/kiyo-map/schema";
 
 type RelatedPanelProps = {
@@ -25,11 +25,13 @@ export function RelatedPanel({
 
   if (!project) {
     return (
-      <aside className="flex min-w-0 flex-1 flex-col bg-muted/20">
-        <div className="flex h-12 shrink-0 items-center border-b border-border px-3">
-          <h3 className="text-sm font-medium">関連情報</h3>
+      <aside className="kiyo-map-panel flex min-w-0 flex-[2] flex-col">
+        <div className="kiyo-map-pane-header flex h-12 shrink-0 items-center px-3">
+          <h3 className="text-sm font-medium text-[var(--kiyo-map-text-primary)]">
+            関連情報
+          </h3>
         </div>
-        <div className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">
+        <div className="flex flex-1 items-center justify-center p-4 text-sm text-[var(--kiyo-map-text-muted)]">
           案件を選択してください
         </div>
       </aside>
@@ -45,19 +47,23 @@ export function RelatedPanel({
   );
 
   return (
-    <aside className="flex min-w-0 flex-1 flex-col bg-muted/20">
-      <div className="flex h-12 shrink-0 items-center border-b border-border px-3">
-        <h3 className="text-sm font-medium">関連情報</h3>
+    <aside className="kiyo-map-panel flex min-w-0 flex-[2] flex-col">
+      <div className="kiyo-map-pane-header flex h-12 shrink-0 items-center px-3">
+        <h3 className="text-sm font-medium text-[var(--kiyo-map-text-primary)]">
+          関連情報
+        </h3>
       </div>
       <ScrollArea className="min-h-0 flex-1">
         <div className="flex flex-col gap-4 p-3">
-          <Card>
+          <Card className="kiyo-map-card border-0 shadow-none">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">関連案件</CardTitle>
+              <CardTitle className="text-sm text-[var(--kiyo-map-text-primary)]">
+                関連案件
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {related.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[var(--kiyo-map-text-muted)]">
                   関連案件はありません
                 </p>
               ) : (
@@ -67,24 +73,25 @@ export function RelatedPanel({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="h-auto justify-start px-2 py-1.5 text-left"
+                    className="h-auto justify-start gap-2 px-2 py-1.5 text-left text-[var(--kiyo-map-text-secondary)] hover:bg-[var(--kiyo-map-bg-card)] hover:text-[var(--kiyo-map-text-primary)]"
                     onClick={() => onSelectProject(rel.id)}
                   >
-                    {rel.title}
+                    <CategoryDot category={rel.category} />
+                    {projectListTitle(rel)}
                   </Button>
                 ))
               )}
               {linkable.length > 0 ? (
                 <>
-                  <Separator />
-                  <p className="text-xs text-muted-foreground">リンクを追加</p>
+                  <Separator className="bg-[var(--kiyo-map-border)]" />
+                  <p className="text-xs text-[var(--kiyo-map-text-muted)]">リンクを追加</p>
                   {linkable.slice(0, 5).map((candidate) => (
                     <Button
                       key={candidate.id}
                       type="button"
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="h-auto justify-start px-2 py-1.5 text-left"
+                      className="h-auto justify-start gap-2 px-2 py-1.5 text-left text-[var(--kiyo-map-text-secondary)] hover:bg-[var(--kiyo-map-bg-card)]"
                       onClick={() =>
                         updateProject(
                           project.id,
@@ -94,11 +101,12 @@ export function RelatedPanel({
                               candidate.id,
                             ],
                           },
-                          `関連案件「${candidate.title}」を追加`,
+                          `関連案件「${projectListTitle(candidate)}」を追加`,
                         )
                       }
                     >
-                      + {candidate.title}
+                      <CategoryDot category={candidate.category} />
+                      + {projectListTitle(candidate)}
                     </Button>
                   ))}
                 </>
@@ -106,9 +114,11 @@ export function RelatedPanel({
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="kiyo-map-card border-0 shadow-none">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">社内メモ</CardTitle>
+              <CardTitle className="text-sm text-[var(--kiyo-map-text-primary)]">
+                社内メモ
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <InlineTextareaField
@@ -121,17 +131,19 @@ export function RelatedPanel({
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="kiyo-map-card border-0 shadow-none">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">AIナレッジ</CardTitle>
+              <CardTitle className="text-sm text-[var(--kiyo-map-text-primary)]">
+                AIナレッジ
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {project.relatedAiKnowledge ? (
-                <p className="text-sm whitespace-pre-wrap">
+                <p className="text-sm whitespace-pre-wrap text-[var(--kiyo-map-text-secondary)]">
                   {project.relatedAiKnowledge}
                 </p>
               ) : (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[var(--kiyo-map-text-muted)]">
                   未生成です。API 連携は Phase 1 後半で追加予定です。
                 </p>
               )}

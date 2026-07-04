@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 
+import { getGeminiModel } from "@/lib/kiyo/gemini-server";
+import { requireAuth } from "@/lib/kiyo/require-auth";
 import {
   buildShapeIdeasPrompt,
   parseShapeIdeasResponse,
 } from "@/lib/kiyo-map/prompts";
-import { requireAuth } from "@/lib/kiyo/require-auth";
 
 const requestSchema = z.object({
   ideas: z.array(
@@ -44,32 +44,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY is not configured" },
-      { status: 503 },
-    );
-  }
-
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
-  const client = new Anthropic({ apiKey });
   const prompt = buildShapeIdeasPrompt(ideas, categories);
 
   try {
-    const response = await client.messages.create({
-      model,
-      max_tokens: 2048,
-      messages: [{ role: "user", content: prompt }],
-    });
+    const model = getGeminiModel();
+    const result = await model.generateContent(prompt);
+    const content = result.response.text().trim();
 
-    const content = response.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join("\n");
+    if (!content) {
+      return NextResponse.json({ error: "Empty Gemini response" }, { status: 500 });
+    }
 
-    const result = parseShapeIdeasResponse(content);
-    if (!result) {
+    const parsed = parseShapeIdeasResponse(content);
+    if (!parsed) {
       return NextResponse.json(
         { error: "AI response could not be parsed", content },
         { status: 502 },
@@ -77,12 +64,13 @@ export async function POST(request: Request) {
     }
 
     const validIds = new Set(ideas.map((idea) => idea.id));
-    const picks = result.picks.filter((pick) => validIds.has(pick.projectId));
+    const picks = parsed.picks.filter((pick) => validIds.has(pick.projectId));
 
-    return NextResponse.json({ ...result, picks });
+    return NextResponse.json({ ...parsed, picks });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Shape ideas request failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const status = message.includes("GOOGLE_API_KEY") ? 503 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import { CategoryBadge } from "@/components/kiyo-map/CategoryBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { projectListTitle } from "@/lib/kiyo-map/labels";
 import type { Project } from "@/lib/kiyo-map/schema";
@@ -143,7 +143,7 @@ export function ShapeIdeasDialog({
                         <CardTitle className="text-sm">
                           {titleById.get(pick.projectId) ?? pick.projectId}
                         </CardTitle>
-                        <Badge variant="outline">{pick.suggestedCategory}</Badge>
+                        <CategoryBadge category={pick.suggestedCategory} />
                       </div>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-2 text-sm">
@@ -194,9 +194,7 @@ export function ShapeIdeasTrigger({ ideas }: ShapeIdeasTriggerProps) {
     <>
       <Button
         type="button"
-        variant="default"
-        size="sm"
-        className="w-full"
+        className="kiyo-map-btn-primary w-full"
         onClick={handleClick}
       >
         <Sparkles className="size-4" />

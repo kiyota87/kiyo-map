@@ -5,11 +5,10 @@ import { Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 
 import { useKiyoMap } from "@/components/kiyo-map/KiyoMapProvider";
-import { IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
-import { Badge } from "@/components/ui/badge";
+import { InboxTriageSheet } from "@/components/kiyo-map/InboxTriageSheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { InboxTriageSheet } from "@/components/kiyo-map/InboxTriageSheet";
+import { IDEA_CATEGORY } from "@/lib/kiyo-map/labels";
 
 export function QuickMemoBar() {
   const { unresolvedInboxCount, addIdeaProject } = useKiyoMap();
@@ -25,32 +24,31 @@ export function QuickMemoBar() {
 
   return (
     <>
-      <div className="flex shrink-0 items-center gap-2 border-t border-border bg-card px-3 py-2">
-        <Lightbulb className="size-4 shrink-0 text-muted-foreground" />
+      <div className="kiyo-map-panel flex shrink-0 items-center gap-2 px-3 py-2">
+        <Lightbulb className="size-4 shrink-0 text-[var(--kiyo-map-accent)]" />
         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 gap-2">
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="ふと思ったアイディアを入力…"
             aria-label="アイディア入力"
-            className="h-8 min-w-0 flex-1 bg-background"
+            className="kiyo-map-input h-8 min-w-0 flex-1"
           />
-          <Button type="submit" size="sm" variant="secondary" className="shrink-0">
+          <Button type="submit" size="sm" className="kiyo-map-btn-primary h-8 shrink-0">
             保存
           </Button>
         </form>
         <Button
           type="button"
-          variant="outline"
           size="sm"
+          className="kiyo-map-btn-primary h-8 shrink-0"
           onClick={() => setInboxOpen(true)}
-          className="shrink-0"
         >
           未整理
           {unresolvedInboxCount > 0 ? (
-            <Badge variant="default" className="ml-1.5">
+            <span className="kiyo-map-badge ml-1.5 tabular-nums">
               {unresolvedInboxCount}
-            </Badge>
+            </span>
           ) : null}
         </Button>
       </div>
